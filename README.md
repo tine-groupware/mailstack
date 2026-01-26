@@ -10,12 +10,8 @@ https://tine-docu.s3web.rz1.metaways.net/operators/howto/MailserverIntegration/
 https://github.com/setiseta/docker-mailstack
 
 # todo
-- dovecote works with tine
-    - could not test
-        - if it receives emails from postfix
-        - or if sassl auth is working
-- postfix is starting
-- postfix dose not work
+- letsencrypt! ?
+- restart containers after renewal
 
 # setup
 ```bash
