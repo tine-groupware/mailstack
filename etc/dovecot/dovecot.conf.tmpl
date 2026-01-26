@@ -1,0 +1,152 @@
+###############
+# General
+###############
+log_path = /dev/stderr
+protocols = imap lmtp sieve pop3
+postmaster_address = {{ getenv "POSTMASTER" "postmaster" }}@{{ getenv "DOMAIN" }}
+hostname = {{ getenv "SERVERNAME" }}
+mail_plugins = $mail_plugins quota
+#Limits
+default_process_limit = 100
+default_client_limit = 500
+
+service dict {
+  unix_listener dict {
+    group = mail
+    mode = 0660
+  }
+}
+
+submission_host = postfix:10025
+###############
+# Mailboxes
+###############
+first_valid_gid = 8
+first_valid_uid = 8
+mail_location = maildir:/var/mail/%d/%u
+mail_home = /var/mail/%d/%u
+mail_uid = mail
+mail_gid = mail
+mail_privileged_group = mail
+mail_access_groups = mail
+
+namespace INBOX {
+  separator = /
+  inbox = yes
+  mailbox Trash {
+    auto = subscribe
+    special_use = \Trash
+  }
+  mailbox Drafts {
+    auto = subscribe
+    special_use = \Drafts
+  }
+  mailbox Sent {
+    auto = subscribe
+    special_use = \Sent
+  }
+}
+
+###############
+# TLS
+###############
+ssl = yes
+ssl_cert = </etc/certificates/live/{{ getenv "SERVERNAME" }}/fullchain.pem
+ssl_key = </etc/certificates/live/{{ getenv "SERVERNAME" }}/privkey.pem
+
+###############
+# Authentication
+###############
+auth_mechanisms = plain login
+
+passdb {
+  driver = sql
+  args = /etc/dovecot/dovecot-sql.conf.ext
+}
+
+userdb {
+  driver = sql
+  args = /etc/dovecot/dovecot-sql.conf.ext
+}
+
+service auth {
+  user = dovecot
+  unix_listener auth-userdb {
+  }
+
+  inet_listener {
+    port = 2102
+  }
+}
+
+service auth-worker {
+  unix_listener auth-worker {
+    user = mail
+    group = $default_internal_user
+    mode = 0660
+  }
+  user = mail
+}
+
+###############
+# IMAP
+###############
+
+protocol imap {
+  mail_plugins = $mail_plugins imap_quota
+  mail_max_userip_connections = 200
+}
+
+service imap-login {
+  process_min_avail = 10
+  inet_listener imap {
+    port = 143
+  }
+  inet_listener imaps {
+    port = 993
+  }
+}
+
+###############
+# POP3
+###############
+protocol pop3 {
+    pop3_uidl_format = UID%u-%v
+}
+
+###############
+# Delivery
+###############
+
+protocol lmtp {
+  mail_plugins = $mail_plugins sieve
+  recipient_delimiter = +
+}
+
+service lmtp {
+  inet_listener lmtp {
+    port = 2525
+  }
+}
+
+plugin {
+  quota = dict:User quota::file:%h/quota
+}
+
+
+###############
+# Filtering
+###############
+
+service managesieve-login {
+	inet_listener sieve {
+    port = 4190
+  }
+}
+
+plugin {
+	sieve_dir = ~/sieve
+	sieve_before = /var/lib/dovecot/before.sieve
+	sieve_default = /var/lib/dovecot/default.sieve
+	sieve_after = /var/lib/dovecot/after.sieve
+}

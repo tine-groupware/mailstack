@@ -1,0 +1,6 @@
+inputFiles:
+  - /etc/dovecot/dovecot.conf.tmpl
+  - /etc/dovecot/dovecot-sql.conf.ext.tmpl
+outputFiles:
+  - /etc/dovecot/dovecot.conf
+  - /etc/dovecot/dovecot-sql.conf.ext

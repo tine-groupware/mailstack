@@ -1,29 +1,36 @@
 services:
     dovecot:
-        image: mailstack-dovecot
+        build:
+            context: .
+            dockerfile: images/dovecot/Dockerfile
+        image: dovecot
         restart: always
-        container_name: mailstack-dovecot
         volumes:
-            - /etc/ssl/docker:/certs
-            - ./data/mail:/mail
-#            - ./etc/dovecot:/etc/...
-        environment:
-            - PROCESSLIMIT=100
-            - CLIENTLIMIT=500
+            - ./data/mail:/var/mail
+            - ./etc/dovecot:/etc/dovecot
+            - /etc/letsencrypt/:/etc/certificates
         ports:
             - "143:143"
             - "993:993"
+        env_file:
+            - .env
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
     postfix:
-        image: mailstack-postfix
+        build:
+            context: .
+            dockerfile: images/postfix/Dockerfile
+        image: postfix
         restart: always
-        container_name: mailstack-postfix
         volumes:
-            - /etc/ssl/docker:/certs
             - ./data/postfix:/var/spool/postfix
-#            - ./etc/postfix:/etc/...
+            - /etc/letsencrypt/:/etc/certificates
+            - ./etc/postfix:/etc/postfix
         ports:
             - "25:25"
             - "587:587"
-#        links:
-#            - dovecot
+        env_file:
+            - .env
+        extra_hosts:
+            - "host.docker.internal:host-gateway"

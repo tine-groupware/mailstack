@@ -1,0 +1,19 @@
+driver = mysql
+connect = host={{ getenv "DB_HOST" }} dbname=dovecot user={{ getenv "DB_USER" }} password={{ getenv "DB_PASS" }}
+default_pass_scheme = SHA512
+
+password_query = SELECT dovecot_users.username AS user, \
+   password, \
+   home AS userdb_home, \
+   uid AS userdb_uid, \
+   gid AS userdb_gid, \
+   CONCAT('*:bytes=', CAST(quota_bytes AS CHAR), 'M') AS userdb_quota_rule \
+   FROM dovecot_users \
+   WHERE dovecot_users.username='%u' OR dovecot_users.loginname='%u'
+
+user_query = SELECT username AS user, home, uid, gid, \
+   CONCAT('*:bytes=', CAST(quota_bytes AS CHAR), 'M') AS quota_rule \
+   FROM dovecot_users \
+   WHERE dovecot_users.username='%u' OR dovecot_users.loginname='%u'
+
+iterate_query = SELECT dovecot_users.username AS user FROM dovecot_users

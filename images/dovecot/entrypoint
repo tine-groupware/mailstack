@@ -1,0 +1,5 @@
+#!/bin/bash
+
+gomplate --config /etc/dovecot/gomplate.yaml
+
+/usr/sbin/dovecot -c /etc/dovecot/dovecot.conf -F

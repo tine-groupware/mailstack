@@ -1,0 +1,5 @@
+#!/bin/bash
+
+gomplate --config /etc/postfix/gomplate.yaml
+
+postfix start-fg

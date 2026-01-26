@@ -1,0 +1,10 @@
+inputFiles:
+  - /etc/postfix/main.cf.tmpl
+  - /etc/postfix/mysql-virtual_alias_maps.cf.tmpl
+  - /etc/postfix/mysql-virtual_mailbox_domains.cf.tmpl
+  - /etc/postfix/mysql-virtual_mailbox_maps.cf.tmpl
+outputFiles:
+  - /etc/postfix/main.cf
+  - /etc/postfix/mysql-virtual_alias_maps.cf
+  - /etc/postfix/mysql-virtual_mailbox_domains.cf
+  - /etc/postfix/mysql-virtual_mailbox_maps.cf
