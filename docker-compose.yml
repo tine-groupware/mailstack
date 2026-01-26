@@ -9,6 +9,9 @@ services:
             - ./data/mail:/var/mail
             - ./etc/dovecot:/etc/dovecot
             - /etc/letsencrypt/:/etc/certificates
+            # or
+            # - /etc/letsencrypt/live/<servername>:/etc/certificates/live/<servername>
+            # - /etc/letsencrypt/archive/<servername>:/etc/certificates/archive/<servername>
         ports:
             - "143:143"
             - "993:993"
@@ -25,11 +28,21 @@ services:
         restart: always
         volumes:
             - ./data/postfix:/var/spool/postfix
+            - ./etc/postfix/gomplate.yaml:/etc/postfix/gomplate.yaml
+            - ./etc/postfix/main.cf.tmpl:/etc/postfix/main.cf.tmpl
+            - ./etc/postfix/master.cf:/etc/postfix/master.cf
+            - ./etc/postfix/mysql-virtual_alias_maps.cf.tmpl:/etc/postfix/mysql-virtual_alias_maps.cf.tmpl
+            - ./etc/postfix/mysql-virtual_mailbox_domains.cf.tmpl:/etc/postfix/mysql-virtual_mailbox_domains.cf.tmpl
+            - ./etc/postfix/mysql-virtual_mailbox_maps.cf.tmpl:/etc/postfix/mysql-virtual_mailbox_maps.cf.tmpl
+            - ./etc/postfix/mysql-virtual_sender_permissions.cf.tmpl:/etc/postfix/mysql-virtual_sender_permissions.cf.tmpl
             - /etc/letsencrypt/:/etc/certificates
-            - ./etc/postfix:/etc/postfix
+            # or
+            # - /etc/letsencrypt/live/<servername>:/etc/certificates/live/<servername>
+            # - /etc/letsencrypt/archive/<servername>:/etc/certificates/archive/<servername>
         ports:
             - "25:25"
             - "587:587"
+            - "465:465"
         env_file:
             - .env
         extra_hosts:

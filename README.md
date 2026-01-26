@@ -26,17 +26,18 @@ mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" -e"CREATE USER IF NOT EXISTS '$DB_USER'@
 mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" -e"GRANT ALL PRIVILEGES ON dovecot.* TO '$DB_USER'@'%'"
 mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" -e"GRANT ALL PRIVILEGES ON postfix.* TO '$DB_USER'@'%'"
 
+mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" postfix
+    INSERT IGNORE INTO `smtp_virtual_domains` (`domain`, `instancename`) VALUES ('mailtest.local.tine-dev.de', 'localhost');
+    exit
+
 mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" dovecot < ~/workspace/gitlab.metaways.net/tine20/docker/tine20/etc/sql/dovecot_tables.sql
 mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" postfix < ~/workspace/gitlab.metaways.net/tine20/docker/tine20/etc/sql/postfix_tables.sql
 
 mysql -h$DB_HOST -u$DB_USER -p"$DB_PASS" postfix # Access denied for user 'mail'@'172.18.0.1' (using password: YES)
 
 echo -e 'server dns0.metaways.net\nupdate add _acme-challenge.mx.mailtest.local.tine-dev.de. 60 txt cC-4F9BvojqBupgkiiBBSlVfrPcIAimOhOslpMQWuPI\nsend' | nsupdate -k ~/.mwclouddns
-echo -e 'server dns0.metaways.net\nupdate add mx.mailtest.local.tine-dev.de. 60 A 127.0.0.1\nsend' | nsupdate -k ~/.mwclouddns
 echo -e 'server dns0.metaways.net\nupdate add mailtest.local.tine-dev.de. 60 MX 10 mx.mailtest.local.tine-dev.de.\nsend' | nsupdate -k ~/.mwclouddns
 
-# "public ip"
-echo -e 'server dns0.metaways.net\nupdate del mx.mailtest.local.tine-dev.de. 60 A 127.0.0.1\nsend' | nsupdate -k ~/.mwclouddns
 echo -e 'server dns0.metaways.net\nupdate add mx.mailtest.local.tine-dev.de. 60 A 192.168.0.190\nsend' | nsupdate -k ~/.mwclouddns
 echo -e 'server dns0.metaways.net\nupdate add mailtest.local.tine-dev.de. 60 A 192.168.0.190\nsend' | nsupdate -k ~/.mwclouddns
 

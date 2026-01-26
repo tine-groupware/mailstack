@@ -1,0 +1,5 @@
+user = {{ getenv "DB_USER" }}
+password = {{ getenv "DB_PASS" }}
+dbname = postfix
+hosts = {{ getenv "DB_HOST" }}
+query = SELECT username FROM smtp_users WHERE email='%s'
