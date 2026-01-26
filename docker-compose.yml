@@ -1,0 +1,29 @@
+services:
+    dovecot:
+        image: mailstack-dovecot
+        restart: always
+        container_name: mailstack-dovecot
+        volumes:
+            - /etc/ssl/docker:/certs
+            - ./data/mail:/mail
+#            - ./etc/dovecot:/etc/...
+        environment:
+            - PROCESSLIMIT=100
+            - CLIENTLIMIT=500
+        ports:
+            - "143:143"
+            - "993:993"
+
+    postfix:
+        image: mailstack-postfix
+        restart: always
+        container_name: mailstack-postfix
+        volumes:
+            - /etc/ssl/docker:/certs
+            - ./data/postfix:/var/spool/postfix
+#            - ./etc/postfix:/etc/...
+        ports:
+            - "25:25"
+            - "587:587"
+#        links:
+#            - dovecot
