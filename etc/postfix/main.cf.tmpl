@@ -65,3 +65,10 @@ smtpd_tls_auth_only = yes
 smtp_tls_security_level = may
 
 maillog_file = /dev/stdout
+
+################################
+## DKIM
+###############################
+smtpd_milters = inet:opendkim:8891
+non_smtpd_milters = $smtpd_milters 
+milter_default_action = accept 

@@ -1,0 +1,4 @@
+inputFiles:
+  - /etc/opendkim/opendkim.conf.tmpl
+outputFiles:
+  - /etc/opendkim/opendkim.conf

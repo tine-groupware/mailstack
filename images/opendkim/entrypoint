@@ -1,0 +1,14 @@
+#!/bin/bash
+
+gomplate --config /etc/opendkim/gomplate.yaml
+
+if ! [ -f /etc/dkimkeys/$DKIM_SELECTOR.private ]; then
+    echo generating dkim key
+    opendkim-genkey -b 1024 -d $SERVERNAME -D /etc/dkimkeys -s $DKIM_SELECTOR -v
+else 
+    echo dkim key exists
+fi
+
+chown -R opendkim:opendkim /etc/dkimkeys 
+
+/usr/sbin/opendkim -f -x /etc/opendkim/opendkim.conf

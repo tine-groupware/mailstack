@@ -19,6 +19,27 @@ services:
             - .env
         extra_hosts:
             - "host.docker.internal:host-gateway"
+        networks:
+            default:
+
+    opendkim:
+        build:
+            context: .
+            dockerfile: images/opendkim/Dockerfile
+        image: opendkim
+        restart: always
+        volumes:
+            - ./data/opendkim:/etc/dkimkeys
+            - ./etc/opendkim:/etc/opendkim
+            # or
+            # - /etc/letsencrypt/live/<servername>:/etc/certificates/live/<servername>
+            # - /etc/letsencrypt/archive/<servername>:/etc/certificates/archive/<servername>
+        env_file:
+            - .env
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        networks:
+            default:
 
     postfix:
         build:
@@ -47,3 +68,13 @@ services:
             - .env
         extra_hosts:
             - "host.docker.internal:host-gateway"
+        networks:
+            default:
+                ipv4_address: 172.13.27.2
+
+networks:
+    default:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.13.27.0/24
