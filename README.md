@@ -1,5 +1,5 @@
 # mailstack
-tine groupware basic mailstack
+tine groupware basic mailstack with dovecot and postfix
 
 ## tine docs
 
@@ -10,10 +10,16 @@ https://tine-docu.s3web.rz1.metaways.net/operators/howto/MailserverIntegration/
 https://github.com/setiseta/docker-mailstack
 
 # todo
-- letsencrypt! ?
+- letsencrypt!?
 - restart containers after renewal
 
 # setup
+
+## build images
+
+    docker compose build
+
+## setup DB
 ```bash
 DB_HOST=127.0.0.1 DB_ROOT_PW=root DB_USER=mail DB_PASS=mail
 mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" -e"CREATE DATABASE IF NOT EXISTS dovecot"
@@ -30,21 +36,19 @@ mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" dovecot < ~/workspace/gitlab.metaways.ne
 mysql -h$DB_HOST -uroot -p"$DB_ROOT_PW" postfix < ~/workspace/gitlab.metaways.net/tine20/docker/tine20/etc/sql/postfix_tables.sql
 
 mysql -h$DB_HOST -u$DB_USER -p"$DB_PASS" postfix # Access denied for user 'mail'@'172.18.0.1' (using password: YES)
+```
 
-echo -e 'server dns0.metaways.net\nupdate add _acme-challenge.mx.mailtest.local.tine-dev.de. 60 txt cC-4F9BvojqBupgkiiBBSlVfrPcIAimOhOslpMQWuPI\nsend' | nsupdate -k ~/.mwclouddns
-echo -e 'server dns0.metaways.net\nupdate add mailtest.local.tine-dev.de. 60 MX 10 mx.mailtest.local.tine-dev.de.\nsend' | nsupdate -k ~/.mwclouddns
+## tweak file permissions
 
-echo -e 'server dns0.metaways.net\nupdate add mx.mailtest.local.tine-dev.de. 60 A 192.168.0.190\nsend' | nsupdate -k ~/.mwclouddns
-echo -e 'server dns0.metaways.net\nupdate add mailtest.local.tine-dev.de. 60 A 192.168.0.190\nsend' | nsupdate -k ~/.mwclouddns
-
+```bash
 docker compose exec dovecot bash -c "chown -R mail:mail /var/mail/"
 docker compose run postfix bash -c "mkdir -p /var/spool/postfix/queue"
 docker compose run postfix bash -c "chown postfix:postdrop /var/spool/postfix/queue/"
 docker compose run postfix bash -c "chown -R postfix /var/spool/postfix/"
 ```
 
-tine config:
-dio
+## tine config
+
 ```diff
 diff --git a/docs/operators/docker/docker-compose.yml b/docs/operators/docker/docker-compose.yml
 index 78332bf753..edfaaecda6 100644
@@ -109,12 +113,4 @@ return  [
         "ssl" => "tls",
     ],
 ];
-```
-
-``` bash
-# cleanup dns
-echo -e 'server dns0.metaways.net\nupdate del _acme-challenge.mx.mailtest.local.tine-dev.de. 60 txt cC-4F9BvojqBupgkiiBBSlVfrPcIAimOhOslpMQWuPI\nsend' | nsupdate -k ~/.mwclouddns
-echo -e 'server dns0.metaways.net\nupdate del mailtest.local.tine-dev.de. 60 MX 10 mx.mailtest.local.tine-dev.de.\nsend' | nsupdate -k ~/.mwclouddns
-echo -e 'server dns0.metaways.net\nupdate del mx.mailtest.local.tine-dev.de. 60 A 192.168.0.190\nsend' | nsupdate -k ~/.mwclouddns
-echo -e 'server dns0.metaways.net\nupdate del mailtest.local.tine-dev.de. 60 A 192.168.0.190\nsend' | nsupdate -k ~/.mwclouddns
 ```
