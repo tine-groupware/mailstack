@@ -40,6 +40,7 @@ echo -e 'server dns0.metaways.net\nupdate add mailtest.local.tine-dev.de. 60 A 1
 docker compose exec dovecot bash -c "chown -R mail:mail /var/mail/"
 docker compose run postfix bash -c "mkdir -p /var/spool/postfix/queue"
 docker compose run postfix bash -c "chown postfix:postdrop /var/spool/postfix/queue/"
+docker compose run postfix bash -c "chown -R postfix /var/spool/postfix/"
 ```
 
 tine config:
