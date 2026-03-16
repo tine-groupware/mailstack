@@ -112,5 +112,11 @@ return  [
         "primarydomain" => "mailtest.local.tine-dev.de",
         "ssl" => "tls",
     ],
+    "sieve" => [
+        "active" => true,
+        "hostname" => "mx.mailtest.local.tine-dev.de",
+        "port" => 4190,
+        "ssl" => "tls"
+    ],
 ];
 ```
