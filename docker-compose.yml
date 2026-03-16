@@ -15,6 +15,7 @@ services:
         ports:
             - "143:143"
             - "993:993"
+            - "4190:4190"
         env_file:
             - .env
         extra_hosts:
@@ -70,7 +71,7 @@ services:
             - "host.docker.internal:host-gateway"
         networks:
             default:
-                ipv4_address: 172.13.27.2
+                ipv4_address: 172.13.27.200
 
 networks:
     default:
