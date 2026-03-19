@@ -59,6 +59,11 @@ ssl_key = </etc/certificates/live/{{ getenv "SERVERNAME" }}/privkey.pem
 ###############
 auth_mechanisms = plain login
 
+### enable plain auth with one of the following (depending on dovecot version)
+### disable_plaintext_auth is replaced by auth_allow_cleartext starting with dovecot 2.4
+# disable_plaintext_auth = no
+# auth_allow_cleartext = yes
+
 passdb {
   driver = sql
   args = /etc/dovecot/dovecot-sql.conf.ext
